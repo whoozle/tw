@@ -13,6 +13,7 @@ parser.add_argument("--all", "-a", help = "Show all timeline, not only updates",
 parser.add_argument("--config", help = "Path to config file", default="~/.twrc")
 parser.add_argument("--replies", "-r", help = "Show replies", const = True, nargs = "?", default = False)
 parser.add_argument("--thread", "-t", help = "Show all tweets in thread with given id")
+parser.add_argument("--post", "-p", help = "Post status")
 args = parser.parse_args()
 
 config_file = args.config
@@ -123,7 +124,11 @@ try:
 
 	user = api.VerifyCredentials()
 
-	if args.thread:
+	if args.post:
+		if len(args.post) > 140:
+			raise Exception("status is too long ({} chars)".format(len(args.post)))
+		api.PostUpdate(args.post)
+	elif args.thread:
 		id = args.thread
 		while id > 0:
 			status = api.GetStatus(id)

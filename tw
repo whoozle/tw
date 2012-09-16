@@ -1,0 +1,101 @@
+#!/usr/bin/env python
+
+import twitter
+import ConfigParser
+import os, sys
+import argparse
+
+parser = argparse.ArgumentParser(description = "Console Twitter Client")
+parser.add_argument("--all", "-a", help = "Show all timeline, not only updates", const = True, nargs = "?", default = False)
+parser.add_argument("--config", help = "Path to config file", default="~/.twrc")
+parser.add_argument("--replies", "-r", help = "Show replies", const = True, nargs = "?", default = False)
+parser.add_argument("--thread", "-t", help = "Show all tweets in thread with given id")
+args = parser.parse_args()
+
+config_file = args.config
+config_file_path = os.path.expanduser(config_file)
+
+config = ConfigParser.SafeConfigParser()
+config.read(config_file_path)
+
+if not config.has_section("account"):
+	config.add_section("account")
+
+if not config.has_section("timeline"):
+	config.add_section("timeline")
+
+def save_config():
+	config.write(open(config_file_path, "w"))
+
+def get_username():
+	try:
+		username = config.get("account", "username")
+	except:
+		print "It seems that you have not entered your username... Please enter it now:"
+		username = sys.stdin.readline().strip()
+		print "Ok, you entered \"{0}\", you could change it later in config file: {1}".format(username, config_file)
+
+
+	config.set("account", "username", username)
+	save_config()
+	return username
+
+def format_status(status):
+	id = u"{0}".format(status.id)
+
+	reply_to = status.in_reply_to_screen_name
+	reply_to = u"\033[33m-> {0}".format(reply_to) if reply_to else str()
+
+	username = u"\033[31m{0}".format(status.user.name)
+	text = u"\033[0m{0}".format(status.text)
+	reset = u"\033[0m"
+
+	return u" ".join((id, username, text, reply_to, reset))
+
+def _show_timeline(timeline, last_id):
+	for s in timeline:
+		if s.id == last_id:
+			break
+		print format_status(s)
+
+def show_timeline(user, name, incremental):
+	try:
+		last_id = config.getint("timeline", "%s-id" %name) if incremental else 0
+	except:
+		last_id = 0
+
+	timeline = {"friends": api.GetFriendsTimeline, "replies": api.GetReplies }[name](user.id)
+	if not timeline:
+		return
+
+	_show_timeline(timeline, last_id)
+
+	last_id = timeline[0].id
+	config.set("timeline", "%s-id" %name, str(last_id))
+	save_config()
+
+try:
+	username = get_username()
+
+	api = twitter.Api(
+		consumer_key = "Mbyq8DHvbVKdCZKvCLlA",
+		consumer_secret = "Q1FXTm5SRjlGRTN0ZzU4Rlkwc1RwVjZqYVVhVllRRks2ZTg0Tmo5OTJR".decode("base64"),
+		access_token_key = config.get("account", "access_token_key"),
+		access_token_secret = config.get("account", "access_token_secret")
+	)
+
+	user = api.VerifyCredentials()
+
+	if args.thread:
+		id = args.thread
+		while id > 0:
+			status = api.GetStatus(id)
+			print format_status(status)
+			id = status.in_reply_to_status_id
+	elif args.replies:
+		show_timeline(user, "replies", not args.all)
+	else:
+		show_timeline(user, "friends", not args.all)
+
+except KeyboardInterrupt:
+	pass

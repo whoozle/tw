@@ -15,6 +15,7 @@ parser.add_argument("--config", help = "Path to config file", default="~/.twrc")
 parser.add_argument("--replies", "-r", help = "Show replies", const = True, nargs = "?", default = False)
 parser.add_argument("--thread", "-t", help = "Show all tweets in thread with given id")
 parser.add_argument("--post", "-p", help = "Post status")
+parser.add_argument("--user", "-u", help = "Show user's timeline")
 args = parser.parse_args()
 
 if args.post:
@@ -82,7 +83,7 @@ def show_timeline(user, name, incremental):
 	except:
 		last_id = 0
 
-	timeline = {"friends": api.GetFriendsTimeline, "replies": api.GetReplies }[name](user.id)
+	timeline = {"friends": api.GetFriendsTimeline, "replies": api.GetReplies, "user": api.GetUserTimeline }[name](user.id)
 	if not timeline:
 		return
 
@@ -146,6 +147,9 @@ try:
 			id = status.in_reply_to_status_id
 	elif args.replies:
 		show_timeline(user, "replies", not args.all)
+	elif args.user:
+		u = api.GetUser(args.user)
+		show_timeline(u, "user", not args.all)
 	else:
 		show_timeline(user, "friends", not args.all)
 

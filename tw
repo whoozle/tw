@@ -43,7 +43,7 @@ def get_username():
 		username = config.get("account", "username")
 	except:
 		username = raw_input("Please, enter your twitter username: ").strip()
-		print "Ok, you entered \"{0}\", you could change it later in config file: {1}".format(username, config_file)
+		print "Ok, logging in as \"{0}\"".format(username)
 
 	config.set("account", "username", username)
 	save_config()

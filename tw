@@ -151,6 +151,7 @@ try:
 		show_timeline(user, "replies", not args.all)
 	elif args.user:
 		u = api.GetUser(args.user)
+		print u.name, u" ({0})".format(u.description) if u.description else ""
 		show_timeline(u, "user", not args.all)
 	else:
 		show_timeline(user, "friends", not args.all)

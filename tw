@@ -16,6 +16,10 @@ parser.add_argument("--thread", "-t", help = "Show all tweets in thread with giv
 parser.add_argument("--post", "-p", help = "Post status")
 args = parser.parse_args()
 
+if args.post:
+	if len(args.post) > 140:
+		raise Exception("status is too long ({} chars)".format(len(args.post)))
+
 config_file = args.config
 config_file_path = os.path.expanduser(config_file)
 
@@ -125,8 +129,6 @@ try:
 	user = api.VerifyCredentials()
 
 	if args.post:
-		if len(args.post) > 140:
-			raise Exception("status is too long ({} chars)".format(len(args.post)))
 		reply_to = None
 		if args.thread:
 			reply_to = args.thread

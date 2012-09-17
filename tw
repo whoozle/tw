@@ -127,7 +127,10 @@ try:
 	if args.post:
 		if len(args.post) > 140:
 			raise Exception("status is too long ({} chars)".format(len(args.post)))
-		api.PostUpdate(args.post)
+		reply_to = None
+		if args.thread:
+			reply_to = args.thread
+		api.PostUpdate(args.post, reply_to)
 	elif args.thread:
 		id = args.thread
 		while id > 0:

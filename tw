@@ -4,6 +4,7 @@ import twitter
 import ConfigParser
 import os, sys
 import argparse
+import re
 
 import urlparse
 import oauth2 as oauth
@@ -53,15 +54,19 @@ def get_username():
 	save_config()
 	return username
 
+re_nick = re.compile(r'@\w+')
+
 def format_status(status):
+	reset = u"\033[0m"
+
 	id = u"{0}".format(status.id)
 
 	reply_to = status.in_reply_to_screen_name
 	reply_to = u"\033[33m-> {0}".format(reply_to) if reply_to else str()
 
 	username = u"\033[31m{0}".format(status.user.name)
-	text = u"\033[0m{0}".format(status.text)
-	reset = u"\033[0m"
+	text = re_nick.sub(lambda m: u"\033[36m" + m.group(0) + reset, status.text)
+	text = u"\033[0m{0}".format(text)
 
 	return u" ".join((id, username, text, reply_to, reset))
 

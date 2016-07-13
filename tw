@@ -85,7 +85,10 @@ def show_timeline(user, name, incremental):
 	except:
 		last_id = 0
 
-	timeline = {"home": api.GetHomeTimeline, "replies": api.GetReplies, "user": api.GetUserTimeline }[name](user.id)
+	if name == "home":
+		timeline = api.GetHomeTimeline()
+	else:
+		timeline = {"replies": api.GetReplies, "user": api.GetUserTimeline }[name](user.id)
 	if not timeline:
 		return
 

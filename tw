@@ -28,9 +28,9 @@ config_file_path = os.path.expanduser(config_file)
 config = ConfigParser.SafeConfigParser()
 config.read(config_file_path)
 
-request_token_url = 'http://twitter.com/oauth/request_token'
-access_token_url = 'http://twitter.com/oauth/access_token'
-authorize_url = 'http://twitter.com/oauth/authorize'
+request_token_url = 'https://twitter.com/oauth/request_token'
+access_token_url = 'https://twitter.com/oauth/access_token'
+authorize_url = 'https://twitter.com/oauth/authorize'
 
 consumer_key = "Mbyq8DHvbVKdCZKvCLlA"
 consumer_secret = "Q1FXTm5SRjlGRTN0ZzU4Rlkwc1RwVjZqYVVhVllRRks2ZTg0Tmo5OTJR".decode("base64")

@@ -85,7 +85,7 @@ def show_timeline(user, name, incremental):
 	except:
 		last_id = 0
 
-	timeline = {"friends": api.GetFriendsTimeline, "replies": api.GetReplies, "user": api.GetUserTimeline }[name](user.id)
+	timeline = {"home": api.GetHomeTimeline, "replies": api.GetReplies, "user": api.GetUserTimeline }[name](user.id)
 	if not timeline:
 		return
 
@@ -154,7 +154,7 @@ try:
 		print u.name, u" ({0})".format(u.description) if u.description else ""
 		show_timeline(u, "user", not args.all)
 	else:
-		show_timeline(user, "friends", not args.all)
+		show_timeline(user, "home", not args.all)
 
 except KeyboardInterrupt:
 	pass

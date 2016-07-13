@@ -28,7 +28,7 @@ config_file_path = os.path.expanduser(config_file)
 config = ConfigParser.SafeConfigParser()
 config.read(config_file_path)
 
-request_token_url = 'https://twitter.com/oauth/request_token'
+request_token_url = 'https://twitter.com/oauth/request_token?oauth_callback=oob'
 access_token_url = 'https://twitter.com/oauth/access_token'
 authorize_url = 'https://twitter.com/oauth/authorize'
 
